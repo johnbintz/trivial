@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+require 'fileutils'
+
+if !ARGV[0]
+	puts "Please specify the name of a new directory to create & trivialize"
+	exit 1
+end
+
+puts "Trivializing #{ARGV[0]}"
+FileUtils.mkdir ARGV[0] if (!File.directory? ARGV[0])
+%w{content actions views scripts styles lib}.each do |dir|
+	FileUtils.mkdir File.join(ARGV[0], dir) if (!File.directory? File.join(ARGV[0], dir))
+end
+
+FileUtils.cp(File.join(File.dirname(__FILE__), '..', 'lib', 'trivial.php'), File.join(ARGV[0], 'lib', 'trivial.php'))
+FileUtils.cp(File.join(File.dirname(__FILE__), '..', 'dist', 'htaccess.dist'), File.join(ARGV[0], '.htaccess'))
+
+if !File.exists? File.join(ARGV[0], 'content', 'index.html')
+	File.open File.join(ARGV[0], 'content', 'index.html'), "w" do |fh|
+		fh.puts %{Your Website construction work just became <a href="http://github.com/johnbintz/trivial/">trivial</a>!}
+	end
+end
+
+puts "Done! Make sure you can use .htaccess files in your Webserver setup."

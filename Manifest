@@ -1,0 +1,5 @@
+Manifest
+Rakefile
+bin/trivialize
+dist/htaccess.dist
+lib/trivial.php
