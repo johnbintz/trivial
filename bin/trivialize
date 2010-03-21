@@ -12,13 +12,14 @@ FileUtils.mkdir ARGV[0] if (!File.directory? ARGV[0])
 	FileUtils.mkdir File.join(ARGV[0], dir) if (!File.directory? File.join(ARGV[0], dir))
 end
 
-FileUtils.cp(File.join(File.dirname(__FILE__), '..', 'lib', 'trivial.php'), File.join(ARGV[0], 'lib', 'trivial.php'))
-FileUtils.cp(File.join(File.dirname(__FILE__), '..', 'dist', 'htaccess.dist'), File.join(ARGV[0], '.htaccess'))
-
-if !File.exists? File.join(ARGV[0], 'content', 'index.html')
-	File.open File.join(ARGV[0], 'content', 'index.html'), "w" do |fh|
-		fh.puts %{Your Website construction work just became <a href="http://github.com/johnbintz/trivial/">trivial</a>!}
-	end
+[
+	[ [File.dirname(__FILE__), '..', 'lib', 'trivial.php'], [ARGV[0], 'lib', 'trivial.php'] ],
+	[ [File.dirname(__FILE__), '..', 'dist', 'htaccess.dist'], [ARGV[0], '.htaccess'] ],
+	[ [File.dirname(__FILE__), '..', 'views', 'application.inc'], [ARGV[0], 'views', 'application.inc'] ],
+	[ [File.dirname(__FILE__), '..', 'content', 'index.html'], [ARGV[0], 'content', 'index.html'] ],
+	[ [File.dirname(__FILE__), '..', 'styles', 'application.css'], [ARGV[0], 'styles', 'application.css'] ]
+].each do |src, dest|
+	FileUtils.cp(File.join(*src), File.join(*dest))
 end
 
 puts "Done! Make sure you can use .htaccess files in your Webserver setup."

@@ -2,7 +2,7 @@ require 'rubygems'
 require 'rake'
 require 'echoe'
 
-Echoe.new('trivial', '0.0.2') do |p|
+Echoe.new('trivial', '0.0.3') do |p|
 	p.summary = "Ultra-lightweight website framework for PHP"
 	p.description = <<-EOT
 		For those who are using PHP to build their sites and want a very simple framework

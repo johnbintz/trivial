@@ -39,11 +39,11 @@ $requested = preg_replace('#/$#', '/index.html', $_SERVER['REDIRECT_URL']);
 $requested = preg_replace("#${trim}/(.*)\.[^\.]+\$#", '\1', $requested);
 
 function styles($additional = array()) {
-	return head_component($additional, 'styles/%s.css',	'<link rel="stylesheet" href="%s" type="text/css" />');
+	return head_component($additional, 'styles/%s.css',	'<link rel="stylesheet" href="styles/%s.css" type="text/css" />');
 }
 
 function scripts($additional = array()) {
-	return head_component($additional, 'scripts/%s.js',	'<script type="text/javascript" src="%s"></script>');
+	return head_component($additional, 'scripts/%s.js',	'<script type="text/javascript" src="scripts/%s.js"></script>');
 }
 
 function head_component($additional, $search, $format) {

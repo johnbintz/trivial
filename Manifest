@@ -1,5 +1,10 @@
 Manifest
 Rakefile
 bin/trivialize
+content/index.html
 dist/htaccess.dist
 lib/trivial.php
+readme.md
+styles/application.css
+trivial.gemspec
+views/application.inc
