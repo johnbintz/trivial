@@ -3,6 +3,11 @@
 // If you're using a different global default layout name, change it here
 $layout = 'application';
 
+if (!isset($_SERVER['REDIRECT_URL'])) {
+	header('HTTP/1.1 403 Forbidden');
+	exit(1);
+}
+
 // END OF USER-CONFIGURABLE SETTINGS
 
 function fe_check($path) {
