@@ -38,12 +38,12 @@ $trim = str_replace(realpath($_SERVER['DOCUMENT_ROOT']), '', realpath($root_dir)
 $requested = preg_replace('#/$#', '/index.html', $_SERVER['REDIRECT_URL']);
 $requested = preg_replace("#${trim}/(.*)\.[^\.]+\$#", '\1', $requested);
 
-function styles($additional = array()) {
-	return head_component($additional, 'styles/%s.css',	'<link rel="stylesheet" href="styles/%s.css" type="text/css" />');
+function styles() {
+	return head_component(func_get_args(), 'styles/%s.css',	'<link rel="stylesheet" href="styles/%s.css" type="text/css" />');
 }
 
-function scripts($additional = array()) {
-	return head_component($additional, 'scripts/%s.js',	'<script type="text/javascript" src="scripts/%s.js"></script>');
+function scripts() {
+	return head_component(func_get_args(), 'scripts/%s.js',	'<script type="text/javascript" src="scripts/%s.js"></script>');
 }
 
 function head_component($additional, $search, $format) {

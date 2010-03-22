@@ -19,7 +19,11 @@ end
 	[ [File.dirname(__FILE__), '..', 'content', 'index.html'], [ARGV[0], 'content', 'index.html'] ],
 	[ [File.dirname(__FILE__), '..', 'styles', 'application.css'], [ARGV[0], 'styles', 'application.css'] ]
 ].each do |src, dest|
-	FileUtils.cp(File.join(*src), File.join(*dest))
+	if !File.exists? File.join(*dest)
+		FileUtils.cp(File.join(*src), File.join(*dest))
+	else
+		puts "Won't overwrite existing #{File.join(*dest)}!"
+	end
 end
 
 puts "Done! Make sure you can use .htaccess files in your Webserver setup."
