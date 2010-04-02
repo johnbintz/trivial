@@ -11,7 +11,7 @@ class Installer
 		@dest_dir = dest_dir
 	end
 
-	def self.go(dest_dir)
+	def self.go(dest_dir, &block)
 		installer = Installer.new(dest_dir)
 		installer.instance_eval &block
 	end
@@ -30,7 +30,7 @@ class Installer
 		File.join(@dest_dir, *dest)
 	end
 
-	def self.paths_to_a(*paths)
+	def paths_to_a(*paths)
 		paths.collect do |path|
 			if path.kind_of? String
 				path = path.split('/')
@@ -80,6 +80,7 @@ else
     mkdir %w{content actions views scripts styles lib config}
 
 		copy 'lib/trivial.php'
+    copy 'config/trivial.inc'
     copy 'dist/htaccess.dist', '.htaccess'
     copy 'views/application.inc'
     copy 'content/index.html'
