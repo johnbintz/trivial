@@ -3,7 +3,7 @@ require 'rake'
 require 'echoe'
 require 'fileutils'
 
-Echoe.new('trivial', '0.0.6') do |p|
+Echoe.new('trivial') do |p|
 	p.summary = "Ultra-lightweight website framework for PHP"
 	p.description = <<-EOT
 		For those who are using PHP to build their sites and want a very simple framework
@@ -26,6 +26,7 @@ namespace :blueprint do
     Dir.chdir 'blueprint'
     system 'git clone git://github.com/joshuaclayton/blueprint-css.git'
     FileUtils.cp_r File.join('blueprint-css', 'blueprint'), File.join('..', 'styles')
+    FileUtils.cp File.join('blueprint-css', 'LICENSE'), File.join('..', 'styles', 'blueprint')
     Dir.chdir '..'
     FileUtils.rm_r 'blueprint'
   end

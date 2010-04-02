@@ -1,0 +1,12 @@
+The blueprint() function includes the Blueprint CSS framework. If you want to use it,
+and you really should, include the following in your application <head>:
+
+<php echo blueprint() ?>
+
+Asset tags (styles and scripts for now) incude cachebusters:
+
+<script type="text/javascript" href="scripts/application.js?1234567890"></script>
+
+This means you can now set the Expires headers for static content to be
+near-indefinite and still have users download the latest versions when an
+update is made.

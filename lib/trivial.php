@@ -1,5 +1,7 @@
 <?php
 
+define('TRIVIAL_VERSION', '0.0.6');
+
 // PUT SITE CONFIGURATION IN config/trivial.inc
 
 if (!isset($_SERVER['REDIRECT_URL'])) {
@@ -69,28 +71,63 @@ function partial($name, $local = array()) {
  * @param string $error The error message to display.
  */
 function render_error($error) {
-  global $trivial_env;
-  if ($trivial_env == 'production') {
-    error_log($error);
-  } else {
-    echo "<div id='trivial-error'>${error}</div>";
-  }
-  header('HTTP/1.1 500 Internal Server Error');
-  exit(1);
+	global $trivial_env;
+	if ($trivial_env == 'production') {
+		error_log($error);
+	} else {
+		echo "<div id='trivial-error'>${error}</div>";
+	}
+	header('HTTP/1.1 500 Internal Server Error');
+	exit(1);
 }
 
 /**
  * Render style link tags.
  */
 function styles() {
-	return head_component('styles', func_get_args(), 'styles/%s.css',	'<link rel="stylesheet" href="styles/%s.css" type="text/css" />');
+	return head_component('style', func_get_args());
 }
 
 /**
  * Render script tags.
  */
 function scripts() {
-	return head_component('scripts', func_get_args(), 'scripts/%s.js',	'<script type="text/javascript" src="scripts/%s.js"></script>');
+	return head_component('script', func_get_args());
+}
+
+/**
+ * Render a style tag.
+ */
+function style($name, $additional = '') {
+	return asset($name, 'styles/%s.css', '<link rel="stylesheet" href="styles/%s.css%s" type="text/css" %s/>', true, $additional);
+}
+
+/**
+ * Render a script tag.
+ */
+function script($name) {
+	return asset($name, 'scripts/%s.js', '<script type="text/javascript" src="scripts/%s.js%s"></script>');
+}
+
+/**
+ * Render an asset tag, busting the cache if necessary.
+ */
+function asset($name, $search, $format, $bust_cache = true, $additional = '') {
+	if (($file = fe_check(sprintf($search, $name))) !== false) {
+		return sprintf($format, $name, $bust_cache ? cachebuster($file) : '', $additional);
+	}
+	return '';
+}
+
+/**
+ * Get a cachebuster string for a file.
+ */
+function cachebuster($file) {
+	if (file_exists($file)) {
+		return '?' . filemtime($file);
+	} else {
+		return '';
+	}
 }
 
 /**
@@ -101,23 +138,20 @@ function scripts() {
  * @param string $format The output format of the HTML tag to bring in the content.
  * @return string The HTML for all found components.
  */
-function head_component($what, $additional, $search, $format) {
+function head_component($what, $additional = array()) {
 	global $requested, $global_head;
 
 	$output = array();
 
-	$components = array_merge(array('application', $requested), $additional);
-	if (is_array($global_head[$what])) {
+	$components = $additional;
+
+	if (isset($global_head[$what]) && is_array($global_head[$what])) {
 		$components = array_merge($components, $global_head[$what]);
 	}
 
-	sort($components);
+	$components = array_merge($components, array('application', $requested));
 
-	foreach ($components as $file) {
-		if (fe_check(sprintf($search, $file)) !== false) {
-			$output[] = sprintf($format, $file);
-		}
-	}
+	foreach ($components as $name) { $output[] = call_user_func($what, $name); }
 	return implode("\n", $output);
 }
 
@@ -127,7 +161,13 @@ function head_component($what, $additional, $search, $format) {
  * @return string The HTML for Blueprint.
  */
 function blueprint() {
-
+  $output = array();
+  $output[] = style('blueprint/screen', 'media="screen, projection"');
+  $output[] = style('blueprint/print', 'media="print"');
+  $output[] = '<!--[if lte IE 8]>';
+  $output[] = style('blueprint/ie', 'media="screen, projection"');
+  $output[] = '<![endif]-->';
+  return implode('', $output);
 }
 
 // Search for files in the content directory, starting with .inc files (which will be include()d), then .html files (which will be file_get_content()sed)

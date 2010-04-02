@@ -6,24 +6,86 @@ if !ARGV[0]
 	exit 1
 end
 
-puts "Trivializing #{ARGV[0]}"
-FileUtils.mkdir ARGV[0] if (!File.directory? ARGV[0])
-%w{content actions views scripts styles lib}.each do |dir|
-	FileUtils.mkdir File.join(ARGV[0], dir) if (!File.directory? File.join(ARGV[0], dir))
-end
-
-[
-	[ [File.dirname(__FILE__), '..', 'lib', 'trivial.php'], [ARGV[0], 'lib', 'trivial.php'] ],
-	[ [File.dirname(__FILE__), '..', 'dist', 'htaccess.dist'], [ARGV[0], '.htaccess'] ],
-	[ [File.dirname(__FILE__), '..', 'views', 'application.inc'], [ARGV[0], 'views', 'application.inc'] ],
-	[ [File.dirname(__FILE__), '..', 'content', 'index.html'], [ARGV[0], 'content', 'index.html'] ],
-	[ [File.dirname(__FILE__), '..', 'styles', 'application.css'], [ARGV[0], 'styles', 'application.css'] ]
-].each do |src, dest|
-	if !File.exists? File.join(*dest)
-		FileUtils.cp(File.join(*src), File.join(*dest))
-	else
-		puts "Won't overwrite existing #{File.join(*dest)}!"
+class Installer
+	def initialize(dest_dir)
+		@dest_dir = dest_dir
 	end
+
+	def self.go(dest_dir)
+		installer = Installer.new(dest_dir)
+		installer.instance_eval &block
+	end
+
+	def mk_mydir
+		FileUtils.mkdir @dest_dir if (!File.directory? @dest_dir)
+	end
+
+	def mkdir(dirs)
+		dirs.each do |dir|
+			FileUtils.mkdir File.join(@dest_dir, dir) if (!File.directory? File.join(@dest_dir, dir))
+		end
+	end
+
+	def dest_path(*dest)
+		File.join(@dest_dir, *dest)
+	end
+
+	def self.paths_to_a(*paths)
+		paths.collect do |path|
+			if path.kind_of? String
+				path = path.split('/')
+			end
+      path
+		end
+	end
+
+	def overwrite(source, dest = nil)
+		dest = source if (dest == nil)
+    source, dest = paths_to_a source, dest
+    source_path = File.join(File.dirname(__FILE__), '..', *source)
+    if File.directory? source_path
+      FileUtils.cp_r source_path, dest_path(*dest)
+    else
+		  FileUtils.cp source_path, dest_path(*dest)
+    end
+	end
+
+	def copy(source, dest = nil)
+		dest = source if (dest == nil)
+    source, dest = paths_to_a source, dest
+		if !File.exists? dest_path(*dest)
+			overwrite(source, dest)
+		else
+			puts "Won't overwrite existing #{dest_path(*dest)}!"
+		end
+  end
 end
 
-puts "Done! Make sure you can use .htaccess files in your Webserver setup."
+if ARGV[0] == '--upgrade'
+	puts "Upgrading to latest version..."
+
+	Installer.go(Dir.pwd) do
+    mkdir %w{config}
+
+		overwrite 'lib/trivial.php'
+    copy 'config/trivial.inc'
+	end
+
+  puts "Done!"
+else
+	puts "Trivializing #{ARGV[0]}"
+
+	Installer.go(ARGV[0]) do
+    mk_mydir
+    mkdir %w{content actions views scripts styles lib config}
+
+		copy 'lib/trivial.php'
+    copy 'dist/htaccess.dist', '.htaccess'
+    copy 'views/application.inc'
+    copy 'content/index.html'
+    copy 'styles/application.css'
+    overwrite 'styles/blueprint'
+	end
+
+	puts "Done! Make sure you can use .htaccess files in your Webserver setup."
+end
