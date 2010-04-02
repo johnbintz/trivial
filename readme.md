@@ -35,3 +35,8 @@ does the following (for the examples, the request was for `about_us/contact.html
 ## Styles and scripts
 
 Styles and scripts can be searched for in a structured way. The included `views/application.inc` gives an example as to how this works.
+
+## Notes
+
+Trivial includes the reset.css and typography.css files from the [Blueprint CSS Framework](http://blueprintcss.org/).
+They're automatically included in the default application.css file.

@@ -1,8 +1,9 @@
 require 'rubygems'
 require 'rake'
 require 'echoe'
+require 'fileutils'
 
-Echoe.new('trivial', '0.0.5') do |p|
+Echoe.new('trivial', '0.0.6') do |p|
 	p.summary = "Ultra-lightweight website framework for PHP"
 	p.description = <<-EOT
 		For those who are using PHP to build their sites and want a very simple framework
@@ -15,4 +16,17 @@ Echoe.new('trivial', '0.0.5') do |p|
 	p.author = "John Bintz"
 	p.email = "john@coswelproductions.com"
 	p.url = "http://github.com/johnbintz/trivial"
+end
+
+namespace :blueprint do
+  desc "Include the latest Blueprint CSS files"
+  task :download do
+    FileUtils.rm_r 'blueprint' if File.directory? 'blueprint'
+    FileUtils.mkdir 'blueprint'
+    Dir.chdir 'blueprint'
+    system 'git clone git://github.com/joshuaclayton/blueprint-css.git'
+    FileUtils.cp_r File.join('blueprint-css', 'blueprint'), File.join('..', 'styles')
+    Dir.chdir '..'
+    FileUtils.rm_r 'blueprint'
+  end
 end
