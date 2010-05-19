@@ -31,3 +31,10 @@ namespace :blueprint do
     FileUtils.rm_r 'blueprint'
   end
 end
+
+namespace :php do
+  desc "Syntax check trivial.php"
+  task :syntax_check do
+    system %{php -l lib/trivial.php}
+  end
+end

@@ -85,14 +85,16 @@ function render_error($error) {
  * Render style link tags.
  */
 function styles() {
-	return head_component('style', func_get_args());
+	$args = func_get_args();
+	return head_component('style', $args);
 }
 
 /**
  * Render script tags.
  */
 function scripts() {
-	return head_component('script', func_get_args());
+	$args = func_get_args();
+	return head_component('script', $args);
 }
 
 /**

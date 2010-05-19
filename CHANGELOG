@@ -1,1 +1,3 @@
+v0.0.7. Fix dumb issue with func_get_args() not being able to be used as a function parameter. Yay PHP!
+
 v0.0.6. Added better asset tags, cachebusters, code cleanup, better documentation, upgrade functionality.
